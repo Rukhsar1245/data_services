@@ -10,8 +10,8 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-  - url: https://api.bittrex.com/api/v1.1/public/getmarketsummaries
-  - url: https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=btc-ltc
+  - url: http://127.0.0.1:5000
+
 tags:
   - name: login
     description: login of user
@@ -31,19 +31,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
+              type: object
+              properties :
+                username :
+                  type : string
+                  example : "test"
+                password :
+                  type : string
+                  example : "password"
+
         required: true
       responses:
         '405':
           description: Invalid input
           content: {}
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+        '200':
+          description : Sucess
       x-codegen-request-body-name: body
   /fetch_market_data:
     get:
@@ -51,23 +54,7 @@ paths:
         - fetch_market_data
       summary: Finds market data completely
       description: complete market data is available in this api
-      operationId: findPetsByStatus
-      parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-              default: available
-              enum:
-                - available
-                - pending
-                - sold
+      operationId: findmarketdata
       responses:
         '200':
           description: successful operation
@@ -85,10 +72,6 @@ paths:
         '400':
           description: Invalid status value
           content: {}
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
       x-codegen-request-body-name: body
   /getmarketsummary/{market}:
     get:
@@ -100,10 +83,10 @@ paths:
       parameters:
         - name: market
           in: path
-          description: ID of pet to return
+          description: data of market to return
           required: true
           schema:
-            type: integer
+            type : string
             format: int64
       responses:
         '200':
@@ -211,7 +194,7 @@ components:
       xml:
         name: login
   securitySchemes:
-    petstore_auth:
+    market_Auth:
       type: oauth2
       flows:
         implicit:
