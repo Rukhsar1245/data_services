@@ -1,0 +1,225 @@
+openapi: 3.0.1
+info:
+  title: market analysis
+  description: documentation related to market data
+  termsOfService: https://bittrex.github.io/api/v1-1
+  contact:
+    email: rukhsar8zia@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://api.bittrex.com/api/v1.1/public/getmarketsummaries
+  - url: https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=btc-ltc
+tags:
+  - name: login
+    description: login of user
+  - name: fetch_market_data
+    description: full market data
+  - name: marketdata
+    description: query data
+paths:
+  /login:
+    post:
+      tags:
+        - login
+      summary: check for login
+      operationId: sign in operation
+      requestBody:
+        description: checking of user for login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+      x-codegen-request-body-name: body
+  /fetch_market_data:
+    get:
+      tags:
+        - fetch_market_data
+      summary: Finds market data completely
+      description: complete market data is available in this api
+      operationId: findPetsByStatus
+      parameters:
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              default: available
+              enum:
+                - available
+                - pending
+                - sold
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/fetch_market_data'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/fetch_market_data'
+        '400':
+          description: Invalid status value
+          content: {}
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
+      x-codegen-request-body-name: body
+  /getmarketsummary/{market}:
+    get:
+      tags:
+        - marketdata
+      summary: Find data by market name
+      description: Returns a single market data dependent on query
+      operationId: getbymarketname
+      parameters:
+        - name: market
+          in: path
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/marketdata'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/marketdata'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: request not found
+          content: {}
+      security:
+        - api_key: []
+components:
+  schemas:
+    fetch_market_data:
+      type: object
+      properties:
+        MarketName:
+          type: string
+        High:
+          type: integer
+          format: int64
+        Low:
+          type: integer
+          format: int32
+        Volume:
+          type: integer
+          format: int32
+        Last:
+          type: integer
+          format: int32
+        Bid:
+          type: integer
+          format: int32
+        TimeStamp:
+          type: string
+          format: date-time
+        BaseVolume:
+          type: integer
+        Ask:
+          type: integer
+        OpenSellOrders:
+          type: integer
+        OpenBuyOrders:
+          type: integer
+        PrevDay:
+          type: integer
+        Created:
+          type: integer
+          format: date-time
+      xml:
+        name: fetch_market_data
+    marketdata:
+      type: object
+      properties:
+        MarketName:
+          type: string
+        High:
+          type: integer
+          format: int64
+        Low:
+          type: integer
+          format: int32
+        Volume:
+          type: integer
+          format: int32
+        Last:
+          type: integer
+          format: int32
+        Bid:
+          type: integer
+          format: int32
+        TimeStamp:
+          type: string
+          format: date-time
+        BaseVolume:
+          type: integer
+        Ask:
+          type: integer
+        OpenSellOrders:
+          type: integer
+        OpenBuyOrders:
+          type: integer
+        PrevDay:
+          type: integer
+        Created:
+          type: integer
+          format: date-time
+      xml:
+        name: fetch_market_data
+    login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      xml:
+        name: login
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://jwt.io/introduction
+          scopes:
+            read:maketdata: read marketdata
+            read:fetch_market_data: market data
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
