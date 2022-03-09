@@ -1,0 +1,6 @@
+Flask-RESTful==0.3.7
+Flask==1.1.1
+flask_jwt_extended
+get_api
+requests
+dotenv
