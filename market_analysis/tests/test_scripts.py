@@ -12,13 +12,13 @@ def app():
           def access_protected():
               link = "https://api.bittrex.com/api/v1.1/public/getmarketsummaries"
               mar = requests.get(link)
-              return jsonify(foo=mar.status_code)
+              return jsonify(response=mar.status_code)
           return app
 
 def test_successful_operation(app):
     test_client = app.test_client()
     response = test_client.get("/protected")
-    assert response.get_json() == {"foo":200 }
+    assert response.get_json() == {"response":200 }
 
 """def test_failed_operations(app):
     test_client = app.test_client()
@@ -38,13 +38,13 @@ def app1():
         q = "btc-ltc"
         link = "https://api.bittrex.com/api/v1.1/public/getmarketsummary?market="+q
         mar = requests.get(link)
-        return jsonify(foo=mar.status_code)
+        return jsonify(response=mar.status_code)
     return app1
 
 def test_successful_operation(app1):
         test_client = app1.test_client()
         response = test_client.get("/querydata")
-        assert response.get_json() == {"foo": 200}
+        assert response.get_json() == {"response": 200}
 
 """def test_failed_operations(app1):
         test_client = app1.test_client()
